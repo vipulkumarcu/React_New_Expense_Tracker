@@ -2,7 +2,8 @@ function Header ()
 {
   return (
     <div>
-      <h1> Expense Tracker </h1>
+      <em style = { { margin: "20px" } } > Welcome To Expense Tracker !!! </em>
+      <hr />
     </div>
   )
 }

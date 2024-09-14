@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, Button, Card, CardBody, FloatingLabel, Form } from "react-bootstrap";
+import { Alert, Button, Card, CardBody, Col, Container, FloatingLabel, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 function Login ( { onTogglerClick } )
@@ -57,6 +57,9 @@ function Login ( { onTogglerClick } )
       setErrorMessage ( "Login Successful" );
       setErrorType ( "success" );
 
+      // Token  from the firebase
+      console.log ( "User logged in:", data.idToken );
+
       // Reset form after success
       setEmail ( "" );
       setPassword ( "" );
@@ -66,7 +69,6 @@ function Login ( { onTogglerClick } )
     
     catch ( error )
     {
-      // Handle any errors during signup
       const message = error.message || "Login failed";
       setIsValid ( true );
       setErrorMessage ( message );
@@ -75,39 +77,47 @@ function Login ( { onTogglerClick } )
   }
 
   return (
-    <>
+    <Container fluid style = { { textAlign: "center", padding: "3px" } } >
 
-      { isValid && <Alert variant = { errorType } onClose = { () => setIsValid ( false ) } dismissible > { errorMessage } </Alert> }
+      <Row className = "m-3 justify-content-center align-items-center" >
 
-      <Card className = "shadow">
+        <Col xs = { 4 } md = { 6 } lg = { 4 } >
 
-        <CardBody style = { { textAlign: "center" } }>
+          { isValid && <Alert variant = { errorType } onClose = { () => setIsValid ( false ) } dismissible > { errorMessage } </Alert> }
 
-          <Card.Title className = "m-4"> Login </Card.Title>
+          <Card className = "shadow">
 
-          <Form onSubmit = { formSubmitHandler }>
+            <CardBody style = { { textAlign: "center" } }>
 
-            <FloatingLabel controlId = "floatingInput" label = "Email address" className = "m-3" >
-              <Form.Control type = "email" placeholder = "Enter Your Email ID" value = { email } onChange = { ( e ) => setEmail ( e.target.value ) } />
-            </FloatingLabel>
+              <Card.Title className = "m-4"> Login </Card.Title>
 
-            <FloatingLabel controlId = "floatingPassword" label = "Password" className = "m-3" >
-              <Form.Control type = "password" placeholder = "Enter Your Password" value = { password } onChange = { ( e ) => setPassword ( e.target.value ) } />
-            </FloatingLabel>
+              <Form onSubmit = { formSubmitHandler }>
 
-            <Button variant = "primary" className = "m-3 p-3" type = "submit" > Login </Button>
+                <FloatingLabel controlId = "floatingInput" label = "Email address" className = "m-3" >
+                  <Form.Control type = "email" placeholder = "Enter Your Email ID" value = { email } onChange = { ( e ) => setEmail ( e.target.value ) } />
+                </FloatingLabel>
 
-          </Form>
+                <FloatingLabel controlId = "floatingPassword" label = "Password" className = "m-3" >
+                  <Form.Control type = "password" placeholder = "Enter Your Password" value = { password } onChange = { ( e ) => setPassword ( e.target.value ) } />
+                </FloatingLabel>
 
-          <a href = "#"> Forgot Password ? Click Here </a>
+                <Button variant = "primary" className = "m-3 p-3" type = "submit" > Login </Button>
 
-        </CardBody>
+              </Form>
 
-      </Card>
+              <a href = "#"> Forgot Password ? Click Here </a>
 
-      <Button variant = "success" className = "m-3 p-3" onClick = { onTogglerClick } > Don't Have an Account ? SignUp </Button>
+            </CardBody>
 
-    </>
+          </Card>
+
+          <Button variant = "dark" className = "m-3 p-3" onClick = { onTogglerClick } > Don't Have an Account ? SignUp </Button>
+
+        </Col>
+
+      </Row>
+
+    </Container>
   )
 }
 

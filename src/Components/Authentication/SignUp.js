@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, Button, Card, CardBody, FloatingLabel, Form } from "react-bootstrap";
+import { Alert, Button, Card, CardBody, Col, Container, FloatingLabel, Form, Row } from "react-bootstrap";
 
 function SignUp ( { onTogglerClick } )
 {
@@ -84,41 +84,49 @@ function SignUp ( { onTogglerClick } )
   }
 
   return (
-    <>
+    <Container fluid style = { { textAlign: "center", padding: "3px" } } >
 
-      { isValid && <Alert variant = { errorType } onClose = { () => setIsValid ( false ) } dismissible > { errorMessage } </Alert> }
+      <Row className = "m-3 justify-content-center align-items-center" >
 
-      <Card className = "shadow">
+        <Col xs = { 4 } md = { 6 } lg = { 4 } >
 
-        <CardBody style = { { textAlign: "center" } }>
+          { isValid && <Alert variant = { errorType } onClose = { () => setIsValid ( false ) } dismissible > { errorMessage } </Alert> }
 
-          <Card.Title className = "m-4"> Sign Up </Card.Title>
+          <Card className = "shadow">
 
-          <Form onSubmit = { formSubmitHandler }>
+            <CardBody style = { { textAlign: "center" } }>
 
-            <FloatingLabel controlId = "floatingInput" label = "Email address" className = "m-3" >
-              <Form.Control type = "email" placeholder = "Enter Your Email ID" value = { email } onChange = { ( e ) => setEmail ( e.target.value ) } />
-            </FloatingLabel>
+              <Card.Title className = "m-4"> Sign Up </Card.Title>
 
-            <FloatingLabel controlId = "floatingPassword" label = "Password" className = "m-3" >
-              <Form.Control type = "password" placeholder = "Enter Your Password" value = { password } onChange = { ( e ) => setPassword ( e.target.value ) } />
-            </FloatingLabel>
+              <Form onSubmit = { formSubmitHandler }>
 
-            <FloatingLabel controlId = "floatingConfirmPassword" label = "Confirm Password" className = "m-3" >
-              <Form.Control type = "password" placeholder = "Enter Your Password Again" value = { confirmPassword } onChange = { ( e ) => setConfirmPassword ( e.target.value ) } />
-            </FloatingLabel>
+                <FloatingLabel controlId = "floatingInput" label = "Email address" className = "m-3" >
+                  <Form.Control type = "email" placeholder = "Enter Your Email ID" value = { email } onChange = { ( e ) => setEmail ( e.target.value ) } />
+                </FloatingLabel>
 
-            <Button variant = "primary" className = "m-3 p-3" type = "submit" > SignUp </Button>
+                <FloatingLabel controlId = "floatingPassword" label = "Password" className = "m-3" >
+                  <Form.Control type = "password" placeholder = "Enter Your Password" value = { password } onChange = { ( e ) => setPassword ( e.target.value ) } />
+                </FloatingLabel>
 
-          </Form>
+                <FloatingLabel controlId = "floatingConfirmPassword" label = "Confirm Password" className = "m-3" >
+                  <Form.Control type = "password" placeholder = "Enter Your Password Again" value = { confirmPassword } onChange = { ( e ) => setConfirmPassword ( e.target.value ) } />
+                </FloatingLabel>
 
-        </CardBody>
+                <Button variant = "primary" className = "m-3 p-3" type = "submit" > SignUp </Button>
 
-      </Card>
+              </Form>
 
-      <Button variant = "success" className = "m-3 p-3" onClick = { onTogglerClick }> Have an Account ? Login </Button>
+            </CardBody>
 
-    </>
+          </Card>
+
+          <Button variant = "success" className = "m-3 p-3" onClick = { onTogglerClick }> Have an Account ? Login </Button>
+
+        </Col>
+
+      </Row>
+
+    </Container>
   )
 }
 
