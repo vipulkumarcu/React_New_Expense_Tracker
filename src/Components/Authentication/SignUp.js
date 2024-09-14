@@ -1,16 +1,22 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Alert, Button, Card, CardBody, Col, Container, FloatingLabel, Form, Row } from "react-bootstrap";
+import ExpenseContext from "../../Context/expense-context";
 
 function SignUp ( { onTogglerClick } )
 {
   const [ email, setEmail ] = useState ( "" );
   const [ password, setPassword ] = useState ( "" );
   const [ confirmPassword, setConfirmPassword ] = useState ( "" );
-  const [ isValid, setIsValid ] = useState ( false );
-  const [ errorMessage, setErrorMessage ] = useState ( "" );
-  const [ errorType, setErrorType ] = useState ( "" );
-
-  const apiUrl = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAY0t64QOJOikMKYIQ9nYgx4GsZ4cOgoRA";
+  
+  const {
+    authenticationHandler,
+    isValid,
+    errorMessage,
+    errorType, setIsValid,
+    setErrorMessage,
+    setErrorType,
+    clearMessageAfterDelay 
+  } = useContext ( ExpenseContext );
 
   async function formSubmitHandler ( event )
   {
@@ -19,67 +25,49 @@ function SignUp ( { onTogglerClick } )
     // Validate if fields are empty
     if ( !email || !password || !confirmPassword )
     {
+      // Changing states for alert messages
       setIsValid ( true );
       setErrorMessage ( "Please fill up all the fields" );
       setErrorType ( "danger" );
+
+      // Clear success message after 3 seconds
+      clearMessageAfterDelay ();
+
       return;
     }
 
     // Validate if passwords match
     if ( password !== confirmPassword )
     {
+      // Changing states for alert messages
       setIsValid ( true );
       setErrorMessage ( "Passwords do not match" );
       setErrorType ( "danger" );
+
+      // Clear success message after 3 seconds
+      clearMessageAfterDelay ();
+
       return;
     }
-    
-    // Make a request to the Firebase API for signing up the user using fetch
-    try
+
+    // Call authentication handler and wait for response
+    const signupSuccess = await authenticationHandler ( email, password, false ); // false means signup
+
+    // Runs only after Signup is Successful
+    if ( signupSuccess )
     {
-      const response = await fetch ( apiUrl,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify (
-            {
-              email: email,
-              password: password,
-              returnSecureToken: true,
-            }
-          ),
-        }
-      );
-
-      const data = await response.json ();
-
-      if ( !response.ok )
-      {
-        // Handle errors from Firebase API (like email already exists or weak password)
-        throw new Error ( data.error.message || "Signup failed" );
-      }
-
+      // Changing states for alert messages
       setIsValid ( true );
       setErrorMessage ( "Signup Successful" );
       setErrorType ( "success" );
 
-      console.log ( "User has successfully signed up" );
+      // Clear success message after 3 seconds
+      clearMessageAfterDelay ();
 
       // Reset form after success
       setEmail ( "" );
       setPassword ( "" );
-      setConfirmPassword ( "" );
-    }
-    
-    catch ( error )
-    {
-      // Handle any errors during signup
-      const message = error.message || "Signup failed";
-      setIsValid ( true );
-      setErrorMessage ( message );
-      setErrorType ( "danger" );
+      setConfirmPassword ( "" );     
     }
   }
 

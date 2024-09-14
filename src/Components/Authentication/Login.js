@@ -1,18 +1,26 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Alert, Button, Card, CardBody, Col, Container, FloatingLabel, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import ExpenseContext from "../../Context/expense-context";
 
 function Login ( { onTogglerClick } )
 {
-  const [ email, setEmail ] = useState ( "" );
-  const [ password, setPassword ] = useState ( "" );
-  const [ isValid, setIsValid ] = useState ( false );
-  const [ errorMessage, setErrorMessage ] = useState ( "" );
-  const [ errorType, setErrorType ] = useState ( "" );
-
   const navigate = useNavigate ();
 
-  const apiUrl = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAY0t64QOJOikMKYIQ9nYgx4GsZ4cOgoRA";
+  const [ email, setEmail ] = useState ( "" );
+  const [ password, setPassword ] = useState ( "" );
+  
+  const {
+    authenticationHandler,
+    loginToken,
+    isValid,
+    errorMessage,
+    errorType,
+    setIsValid,
+    setErrorMessage,
+    setErrorType,
+    clearMessageAfterDelay 
+  } = useContext ( ExpenseContext );
 
   async function formSubmitHandler ( event )
   {
@@ -21,60 +29,29 @@ function Login ( { onTogglerClick } )
     // Validate if fields are empty
     if ( !email || !password )
     {
+      // Changing states for alert messages
       setIsValid ( true );
       setErrorMessage ( "Please fill up all the fields" );
       setErrorType ( "danger" );
+
+      // Clear success message after 3 seconds
+      clearMessageAfterDelay ();
+
       return;
     }
-    
-    // Make a request to the Firebase API for signing up the user using fetch
-    try
+
+    const loginSuccess = await authenticationHandler ( email, password, true ); // true for login
+
+    // Runs only after Login is Successful
+    if ( loginSuccess )
     {
-      const response = await fetch ( apiUrl,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify (
-            {
-              email: email,
-              password: password,
-              returnSecureToken: true,
-            }
-          ),
-        }
-      );
-
-      const data = await response.json ();
-
-      if ( !response.ok )
-      {
-        throw new Error ( data.error.message || "Login failed" );
-      }
-
-      setIsValid ( true );
-      setErrorMessage ( "Login Successful" );
-      setErrorType ( "success" );
-
-      // Token  from the firebase
-      console.log ( "User logged in:", data.idToken );
-
-      // Reset form after success
+      // Reset form, store the token and navigate only on success
       setEmail ( "" );
       setPassword ( "" );
-
-     navigate ( "/header" );
+      localStorage.setItem ( "Token", loginToken );
+      navigate ( "/header" );
     }
-    
-    catch ( error )
-    {
-      const message = error.message || "Login failed";
-      setIsValid ( true );
-      setErrorMessage ( message );
-      setErrorType ( "danger" );
-    }
-  }
+  };
 
   return (
     <Container fluid style = { { textAlign: "center", padding: "3px" } } >
@@ -105,7 +82,7 @@ function Login ( { onTogglerClick } )
 
               </Form>
 
-              <a href = "#"> Forgot Password ? Click Here </a>
+              <a href = "#" > Forgot Password ? Click Here </a>
 
             </CardBody>
 
