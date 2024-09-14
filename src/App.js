@@ -4,17 +4,17 @@ import SignUp from "./Components/Authentication/SignUp";
 function App ()
 {
   return (
-    <Container style = { { textAlign: "center" } }>
+    <Container fluid style = { { textAlign: "center", padding: "3px" } } >
 
-      <h1> Expense Tracker </h1>
+      <Row className = "m-3" >
+        <h1> Expense Tracker </h1>
+      </Row>
 
-      <Container>
-        <Row>
-          <Col xs = { 4 } >
-            <SignUp />
-          </Col>
-        </Row>
-      </Container>
+      <Row className = "m-3 justify-content-center align-items-center" >
+        <Col xs = { 4 } md = { 6 } lg = { 4 } >
+          <SignUp />
+        </Col>
+      </Row>
 
     </Container>
   );

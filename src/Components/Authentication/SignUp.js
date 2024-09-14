@@ -25,7 +25,7 @@ function SignUp ()
       return;
     }
 
-    // Validate password match
+    // Validate if passwords match
     if ( password !== confirmPassword )
     {
       setIsValid ( true );
@@ -33,7 +33,6 @@ function SignUp ()
       setErrorType ( "danger" );
       return;
     }
-
     
     // Make a request to the Firebase API for signing up the user using fetch
     try
@@ -77,9 +76,9 @@ function SignUp ()
     catch ( error )
     {
       // Handle any errors during signup
-      const errorMsg = error.message || "Signup failed";
+      const message = error.message || "Signup failed";
       setIsValid ( true );
-      setErrorMessage ( errorMsg );
+      setErrorMessage ( message );
       setErrorType ( "danger" );
     }
   }
@@ -87,13 +86,13 @@ function SignUp ()
   return (
     <>
 
-      { isValid && <Alert variant = { errorType } onClose = { () => setIsValid ( false ) } dismissible > { errorMessage } </Alert> }
-
       <Card className = "shadow">
+
+        { isValid && <Alert variant = { errorType } onClose = { () => setIsValid ( false ) } dismissible > { errorMessage } </Alert> }
 
         <CardBody style = { { textAlign: "center" } }>
 
-          <Card.Title className = "m-5"> Sign Up </Card.Title>
+          <Card.Title className = "m-4"> Sign Up </Card.Title>
 
           <Form onSubmit = { formSubmitHandler }>
 
