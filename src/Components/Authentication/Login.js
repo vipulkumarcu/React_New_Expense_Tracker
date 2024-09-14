@@ -1,35 +1,28 @@
 import { useState } from "react";
 import { Alert, Button, Card, CardBody, FloatingLabel, Form } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
-function SignUp ( { onTogglerClick } )
+function Login ( { onTogglerClick } )
 {
   const [ email, setEmail ] = useState ( "" );
   const [ password, setPassword ] = useState ( "" );
-  const [ confirmPassword, setConfirmPassword ] = useState ( "" );
   const [ isValid, setIsValid ] = useState ( false );
   const [ errorMessage, setErrorMessage ] = useState ( "" );
   const [ errorType, setErrorType ] = useState ( "" );
 
-  const apiUrl = "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAY0t64QOJOikMKYIQ9nYgx4GsZ4cOgoRA";
+  const navigate = useNavigate ();
+
+  const apiUrl = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAY0t64QOJOikMKYIQ9nYgx4GsZ4cOgoRA";
 
   async function formSubmitHandler ( event )
   {
     event.preventDefault ();
 
     // Validate if fields are empty
-    if ( !email || !password || !confirmPassword )
+    if ( !email || !password )
     {
       setIsValid ( true );
       setErrorMessage ( "Please fill up all the fields" );
-      setErrorType ( "danger" );
-      return;
-    }
-
-    // Validate if passwords match
-    if ( password !== confirmPassword )
-    {
-      setIsValid ( true );
-      setErrorMessage ( "Passwords do not match" );
       setErrorType ( "danger" );
       return;
     }
@@ -57,26 +50,24 @@ function SignUp ( { onTogglerClick } )
 
       if ( !response.ok )
       {
-        // Handle errors from Firebase API (like email already exists or weak password)
-        throw new Error ( data.error.message || "Signup failed" );
+        throw new Error ( data.error.message || "Login failed" );
       }
 
       setIsValid ( true );
-      setErrorMessage ( "Signup Successful" );
+      setErrorMessage ( "Login Successful" );
       setErrorType ( "success" );
-
-      console.log ( "User has successfully signed up" );
 
       // Reset form after success
       setEmail ( "" );
       setPassword ( "" );
-      setConfirmPassword ( "" );
+
+     navigate ( "/header" );
     }
     
     catch ( error )
     {
       // Handle any errors during signup
-      const message = error.message || "Signup failed";
+      const message = error.message || "Login failed";
       setIsValid ( true );
       setErrorMessage ( message );
       setErrorType ( "danger" );
@@ -92,7 +83,7 @@ function SignUp ( { onTogglerClick } )
 
         <CardBody style = { { textAlign: "center" } }>
 
-          <Card.Title className = "m-4"> Sign Up </Card.Title>
+          <Card.Title className = "m-4"> Login </Card.Title>
 
           <Form onSubmit = { formSubmitHandler }>
 
@@ -104,22 +95,20 @@ function SignUp ( { onTogglerClick } )
               <Form.Control type = "password" placeholder = "Enter Your Password" value = { password } onChange = { ( e ) => setPassword ( e.target.value ) } />
             </FloatingLabel>
 
-            <FloatingLabel controlId = "floatingConfirmPassword" label = "Confirm Password" className = "m-3" >
-              <Form.Control type = "password" placeholder = "Enter Your Password Again" value = { confirmPassword } onChange = { ( e ) => setConfirmPassword ( e.target.value ) } />
-            </FloatingLabel>
-
-            <Button variant = "primary" className = "m-3 p-3" type = "submit" > SignUp </Button>
+            <Button variant = "primary" className = "m-3 p-3" type = "submit" > Login </Button>
 
           </Form>
+
+          <a href = "#"> Forgot Password ? Click Here </a>
 
         </CardBody>
 
       </Card>
 
-      <Button variant = "success" className = "m-3 p-3" onClick = { onTogglerClick }> Have an Account ? Login </Button>
+      <Button variant = "success" className = "m-3 p-3" onClick = { onTogglerClick } > Don't Have an Account ? SignUp </Button>
 
     </>
   )
 }
 
-export default SignUp;
+export default Login;
