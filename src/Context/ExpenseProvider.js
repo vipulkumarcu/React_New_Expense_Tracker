@@ -40,7 +40,7 @@ function ExpenseProvider ( props )
         throw new Error ( data.error.message || "Authentication failed" );
       }
 
-      return [ true, data.idToken ] ; // Indicates success and returns tokenID after login is completed successfully
+      return [ true, data.idToken ] ; // Indicates success and returns tokenID after login/signup is completed successfully
     }
 
     catch ( error )
@@ -74,6 +74,96 @@ function ExpenseProvider ( props )
     clearMessageAfterDelay ();
   };
 
+  async function emailVerificationHandler ( token )
+  {
+    let url = "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyAY0t64QOJOikMKYIQ9nYgx4GsZ4cOgoRA";
+
+    try
+    {
+      let response = await fetch ( url,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify (
+            {
+              requestType: "VERIFY_EMAIL",
+              idToken: token,
+            }
+          ),
+        }
+      )
+      const data = await response.json ();
+
+      console.log ( data );
+
+      if ( !response.ok )
+      {
+        throw new Error ( data.error.message || "Email verification failed" );
+      }
+
+      handleAlertMessages ( "Email sent for verification", "success" );
+
+      const confirmation = await emailVerified ( token )
+
+      return confirmation;
+    }
+
+    catch ( error )
+    {
+      handleAlertMessages ( error.message || "Email verification failed", "danger" );
+    }
+  }
+
+  async function emailVerified ( token )
+  {
+    const url = "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyAY0t64QOJOikMKYIQ9nYgx4GsZ4cOgoRA";
+  
+    try {
+      const response = await fetch ( url,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify (
+            {
+              idToken: token,
+            }
+          ),
+        }
+      );
+  
+      const data = await response.json ();
+  
+      if ( !response.ok )
+      {
+        throw new Error ( data.error.message || "Failed to check email verification status." );
+      }
+  
+      const emailVerified = data.users[0].emailVerified;
+  
+      if ( emailVerified )
+      {
+        handleAlertMessages ( "Your email is verified!", "success" );
+      }
+      
+      else
+      {
+        handleAlertMessages ( "Your email is not verified yet.", "warning" );
+      }
+  
+      return emailVerified;
+    }
+    
+    catch ( error )
+    {
+      handleAlertMessages ( error.message || "Error checking email verification status.", "danger" );
+      return false;
+    }
+  }
+
   const expenseContext = {
     isValid,
     errorMessage,
@@ -82,6 +172,7 @@ function ExpenseProvider ( props )
     // setErrorMessage,
     // setErrorType,
     authenticationHandler,
+    emailVerificationHandler,
     clearMessageAfterDelay,
     handleAlertMessages,
   };

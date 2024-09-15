@@ -36,17 +36,17 @@ function SignUp ( { onTogglerClick } )
     }
 
     // Call authentication handler and wait for response
-    const signupSuccess = await authenticationHandler ( email, password, false ); // false means signup
+    const [ signupSuccess, token ] = await authenticationHandler ( email, password, false ); // false means signup
 
     // Runs only after Signup is Successful
     if ( signupSuccess )
     {
-      handleAlertMessages ( "Signup Successful", "success" );
+      handleAlertMessages ( "Signup Successful.", "success" );
 
       // Reset form after success
       setEmail ( "" );
       setPassword ( "" );
-      setConfirmPassword ( "" );     
+      setConfirmPassword ( "" );   
     }
   }
 
