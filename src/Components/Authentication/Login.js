@@ -12,43 +12,33 @@ function Login ( { onTogglerClick } )
   
   const {
     authenticationHandler,
-    loginToken,
     isValid,
     errorMessage,
     errorType,
     setIsValid,
-    setErrorMessage,
-    setErrorType,
-    clearMessageAfterDelay 
+    handleAlertMessages, 
   } = useContext ( ExpenseContext );
 
   async function formSubmitHandler ( event )
   {
     event.preventDefault ();
 
-    // Validate if fields are empty
+    // Validate if fields are empty and display appropriate message
     if ( !email || !password )
     {
-      // Changing states for alert messages
-      setIsValid ( true );
-      setErrorMessage ( "Please fill up all the fields" );
-      setErrorType ( "danger" );
-
-      // Clear success message after 3 seconds
-      clearMessageAfterDelay ();
-
+      handleAlertMessages ( "Please fill up all the fields", "danger" );
       return;
     }
 
-    const loginSuccess = await authenticationHandler ( email, password, true ); // true for login
-
+    const [ loginSuccess, token ] = await authenticationHandler ( email, password, true ); // true for login  
+    
     // Runs only after Login is Successful
     if ( loginSuccess )
     {
       // Reset form, store the token and navigate only on success
       setEmail ( "" );
       setPassword ( "" );
-      localStorage.setItem ( "Token", loginToken );
+      localStorage.setItem ( "Token", token );
       navigate ( "/header" );
     }
   };

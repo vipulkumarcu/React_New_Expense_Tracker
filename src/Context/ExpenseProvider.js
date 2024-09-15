@@ -2,10 +2,7 @@ import { useState } from "react";
 import ExpenseContext from "./expense-context";
 
 function ExpenseProvider ( props )
-{
-  // State for checking if the user is loggedin or not
-  const [ loginToken, setLoginToken ] = useState ( null );
-  
+{ 
   // States for alert
   const [ isValid, setIsValid ] = useState ( false );
   const [ errorMessage, setErrorMessage ] = useState ( "" );
@@ -43,23 +40,17 @@ function ExpenseProvider ( props )
         throw new Error ( data.error.message || "Authentication failed" );
       }
 
-      setLoginToken ( data.idToken );
-      return true; // Indicates success
+      return [ true, data.idToken ] ; // Indicates success and returns tokenID after login is completed successfully
     }
 
     catch ( error )
     {
-      setIsValid ( true );
-      setErrorMessage ( error.message || "Authentication failed" );
-      setErrorType ( "danger" );
-
-      clearMessageAfterDelay ();
-
-      return false; // Indicates failure
+      handleAlertMessages ( error.message || "Authentication failed", "danger" );
+      return [ false, null ]; // Indicates failure
     }
   }
 
-  // Function to clear the success/error message after 2 seconds
+  // Function to clear the success/error message after 3 seconds
   function clearMessageAfterDelay ()
   {
     setTimeout (
@@ -67,21 +58,32 @@ function ExpenseProvider ( props )
         setIsValid ( false );
         setErrorMessage ( "" );
         setErrorType ( "" );
-      }, 2000
+      }, 3000
     );
   }
 
+  // Function to handle and display errors
+  function handleAlertMessages ( message, type )
+  {
+    // Changing states for alert messages
+    setIsValid ( true );
+    setErrorMessage ( message );
+    setErrorType ( type );
+
+    // Clearing alerts after 3 seconds
+    clearMessageAfterDelay ();
+  };
+
   const expenseContext = {
-    loginToken,
     isValid,
     errorMessage,
     errorType,
-    setLoginToken,
     setIsValid,
-    setErrorMessage,
-    setErrorType,
+    // setErrorMessage,
+    // setErrorType,
     authenticationHandler,
     clearMessageAfterDelay,
+    handleAlertMessages,
   };
 
   return (

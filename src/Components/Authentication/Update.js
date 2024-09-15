@@ -6,69 +6,64 @@ import { useNavigate } from "react-router-dom";
 function Update ()
 {
   const {
-    loginToken,
     isValid,
     errorMessage,
     errorType,
     setIsValid,
-    setErrorMessage,
-    setErrorType,
-    clearMessageAfterDelay
+    handleAlertMessages,
   } = useContext ( ExpenseContext );
 
   const [ fullName, setFullName ] = useState ( "" );
   const [ profilePictureURL, setProfilePictureURL ] = useState ( "" );
+  const loginToken = ( localStorage.getItem ( "Token" ) || "" ) ;
 
   const navigate = useNavigate ();
 
   useEffect (
     () => {
-      fetchData ();
-    }, []
-  );
-
-  async function fetchData ()
-  {
-    try
-    {
-      const url = "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyAY0t64QOJOikMKYIQ9nYgx4GsZ4cOgoRA"
-
-      const response = await fetch ( url,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify (
-            {
-              idToken: loginToken,
-            }
-          ),
-        }
-      );
-
-      const data = await response.json ();
-
-      if ( !response.ok )
+      async function fetchData ()
       {
-        throw new Error ( data.error.message || "Failed to load data." );
+        try
+        {
+          const url = "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyAY0t64QOJOikMKYIQ9nYgx4GsZ4cOgoRA"
+
+          const response = await fetch ( url,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify (
+                {
+                  idToken: loginToken,
+                }
+              ),
+            }
+          );
+
+          const data = await response.json ();
+
+          if ( !response.ok )
+          {
+            throw new Error ( data.error.message || "Failed to load data." );
+          }
+
+          setFullName ( data.users[0].displayName || "" );
+          setProfilePictureURL ( data.users[0].photoUrl || "" );
+        }
+
+        catch ( error )
+        {
+          handleAlertMessages ( error.message || "Failed to load data.", "danger" );
+        }
       }
 
-      setFullName ( data.users[0].displayName || "" ); // Fetch displayName
-      setProfilePictureURL ( data.users[0].photoUrl || "" ); // Fetch photoUrl
-    }
-
-    catch ( error )
-    {
-      // Changing states for alert messages
-      setIsValid ( true );
-      setErrorMessage ( error.message || "Failed to load data." );
-      setErrorType ( "danger" );
-
-      // Clear success message after 3 seconds
-      clearMessageAfterDelay ();
-    }
-  }
+      if ( loginToken )
+      {
+        fetchData ();
+      }    
+    }, [ loginToken, handleAlertMessages ]
+  );
 
   async function formSubmitHandler ( event )
   {
@@ -77,14 +72,7 @@ function Update ()
     // Validate if fields are empty
     if ( !fullName || !profilePictureURL )
     {
-      // Changing states for alert messages
-      setIsValid ( true );
-      setErrorMessage ( "Please fill up all the fields" );
-      setErrorType ( "danger" );
-
-      // Clear success message after 3 seconds
-      clearMessageAfterDelay ();
-
+      handleAlertMessages ( "Please fill up all the fields", "danger" );
       return;
     }
 
@@ -100,9 +88,9 @@ function Update ()
           },
           body: JSON.stringify (
             {
-              idToken: loginToken, // Pass the loginToken correctly
-              displayName: fullName, // Use displayName for full name
-              photoUrl: profilePictureURL, // Use photoUrl for profile picture URL
+              idToken: loginToken,
+              displayName: fullName,
+              photoUrl: profilePictureURL,
               returnSecureToken: true,
             }
           ),
@@ -116,13 +104,7 @@ function Update ()
         throw new Error ( data.error.message || "Failed to update profile." );
       }
 
-      // Changing states for alert messages
-      setIsValid ( true );
-      setErrorMessage ( "Profile Updated Successfully" );
-      setErrorType ( "success" );
-
-      // Clear success message after 3 seconds
-      clearMessageAfterDelay ();
+      handleAlertMessages ( "Profile Updated Successfully", "success" );
 
       // Reset form after success
       setFullName ( "" );
@@ -131,13 +113,7 @@ function Update ()
 
     catch ( error )
     {
-      // Changing states for alert messages
-      setIsValid ( true );
-      setErrorMessage ( error.message || "Failed to update profile." );
-      setErrorType ( "danger" );
-
-      // Clear success message after 3 seconds
-      clearMessageAfterDelay ();
+      handleAlertMessages ( error.message || "Failed to update profile.", "danger" );
     }
   }
 
@@ -151,6 +127,8 @@ function Update ()
           { isValid && <Alert variant = { errorType } onClose = { () => setIsValid ( false ) } dismissible > { errorMessage } </Alert> }
 
           <Card className = "shadow">
+
+            <Card.Title className = "m-4"> Update User Details </Card.Title>
 
             <CardBody style = { { textAlign: "center" } }>
 

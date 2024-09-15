@@ -12,10 +12,9 @@ function SignUp ( { onTogglerClick } )
     authenticationHandler,
     isValid,
     errorMessage,
-    errorType, setIsValid,
-    setErrorMessage,
-    setErrorType,
-    clearMessageAfterDelay 
+    errorType,
+    setIsValid,
+    handleAlertMessages, 
   } = useContext ( ExpenseContext );
 
   async function formSubmitHandler ( event )
@@ -25,28 +24,14 @@ function SignUp ( { onTogglerClick } )
     // Validate if fields are empty
     if ( !email || !password || !confirmPassword )
     {
-      // Changing states for alert messages
-      setIsValid ( true );
-      setErrorMessage ( "Please fill up all the fields" );
-      setErrorType ( "danger" );
-
-      // Clear success message after 3 seconds
-      clearMessageAfterDelay ();
-
+      handleAlertMessages ( "Please fill up all the fields", "danger" );
       return;
     }
 
     // Validate if passwords match
     if ( password !== confirmPassword )
     {
-      // Changing states for alert messages
-      setIsValid ( true );
-      setErrorMessage ( "Passwords do not match" );
-      setErrorType ( "danger" );
-
-      // Clear success message after 3 seconds
-      clearMessageAfterDelay ();
-
+      handleAlertMessages ( "Passwords do not match", "danger" );
       return;
     }
 
@@ -56,13 +41,7 @@ function SignUp ( { onTogglerClick } )
     // Runs only after Signup is Successful
     if ( signupSuccess )
     {
-      // Changing states for alert messages
-      setIsValid ( true );
-      setErrorMessage ( "Signup Successful" );
-      setErrorType ( "success" );
-
-      // Clear success message after 3 seconds
-      clearMessageAfterDelay ();
+      handleAlertMessages ( "Signup Successful", "success" );
 
       // Reset form after success
       setEmail ( "" );
