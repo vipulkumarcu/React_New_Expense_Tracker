@@ -9,6 +9,8 @@ function Login ( { onTogglerClick } )
 
   const [ email, setEmail ] = useState ( "" );
   const [ password, setPassword ] = useState ( "" );
+
+  localStorage.removeItem ( "Token" );
   
   const {
     authenticationHandler,

@@ -10,6 +10,7 @@ const ExpenseContext = React.createContext (
     // setErrorType: () => {},      // Function to set the error type
     authenticationHandler: () => {},  // Function to handle login/signup (authentication)
     emailVerificationHandler: () => {},  // Function to handle user email verification
+    emailVerified: () => {},  // Function to check if the email is verified
     clearMessageAfterDelay: () => {},  // Function to clear alerts after 3 seconds
     handleAlertMessages: () => {},  // Function to display error messages
   }

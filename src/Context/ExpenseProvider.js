@@ -96,27 +96,23 @@ function ExpenseProvider ( props )
       )
       const data = await response.json ();
 
-      console.log ( data );
-
       if ( !response.ok )
       {
         throw new Error ( data.error.message || "Email verification failed" );
       }
 
-      handleAlertMessages ( "Email sent for verification", "success" );
-
-      const confirmation = await emailVerified ( token )
-
-      return confirmation;
+      handleAlertMessages ( "Email sent for verification. Verification status will change in your next session", "success" );
+      return true;
     }
 
     catch ( error )
     {
       handleAlertMessages ( error.message || "Email verification failed", "danger" );
+      return false;
     }
   }
 
-  async function emailVerified ( token )
+  async function emailVerified ( token, buttonClicked )
   {
     const url = "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyAY0t64QOJOikMKYIQ9nYgx4GsZ4cOgoRA";
   
@@ -141,17 +137,26 @@ function ExpenseProvider ( props )
       {
         throw new Error ( data.error.message || "Failed to check email verification status." );
       }
+
+      // Ensuring that the data exists
+      if ( !data.users || !data.users[0] )
+      {
+        throw new Error("User data unavailable.");
+      }
   
       const emailVerified = data.users[0].emailVerified;
-  
-      if ( emailVerified )
+
+      if ( buttonClicked )
       {
-        handleAlertMessages ( "Your email is verified!", "success" );
-      }
-      
-      else
-      {
-        handleAlertMessages ( "Your email is not verified yet.", "warning" );
+        if ( emailVerified )
+        {
+          handleAlertMessages ( "Your email is verified!", "success" );
+        }
+        
+        else
+        {
+          handleAlertMessages ( "Your email is not verified yet.", "warning" );
+        }
       }
   
       return emailVerified;
@@ -173,6 +178,7 @@ function ExpenseProvider ( props )
     // setErrorType,
     authenticationHandler,
     emailVerificationHandler,
+    emailVerified,
     clearMessageAfterDelay,
     handleAlertMessages,
   };

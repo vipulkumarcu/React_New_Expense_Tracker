@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Alert, Button, Col, Container, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import ExpenseContext from "../../Context/expense-context";
@@ -6,18 +6,39 @@ import ExpenseContext from "../../Context/expense-context";
 function Header ()
 {
   const token = localStorage.getItem ( "Token" );
-  const { emailVerificationHandler, isValid, setIsValid, errorMessage, errorType } = useContext ( ExpenseContext );
+  const { emailVerificationHandler, emailVerified, isValid, setIsValid, errorMessage, errorType } = useContext ( ExpenseContext );
   const [ isEmailVerified, setIsEmailVerified ] = useState ( false );
 
-  async function verifyEmail ()
+  async function verifyEmail ( buttonClicked )
   {
-    const boolean = await emailVerificationHandler ( token );
+    let boolean = null;
 
+    if ( buttonClicked )
+    {
+      boolean = await emailVerificationHandler ( token );
+    }
+    
     if ( boolean )
     {
-      setIsEmailVerified ( true );
+      return;
+    }
+
+    else
+    {
+      const confirmation = await emailVerified ( token, buttonClicked );
+
+      if ( confirmation )
+      {
+        setIsEmailVerified ( true );
+      }
     }
   }
+
+  useEffect (
+    () => {
+      verifyEmail ( false );
+    }, []
+  );
 
   return (
     <Container style = { { margin: 0, padding: 0 } } >
@@ -28,7 +49,7 @@ function Header ()
         </Col>
 
         <Col>
-          { !isEmailVerified && <Button variant = "warning" onClick = { verifyEmail } > Verify Email </Button> }
+          { !isEmailVerified && <Button variant = "warning" onClick = { () => verifyEmail ( true ) } > Verify Email </Button> }
         </Col>
 
         <Col>
