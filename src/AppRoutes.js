@@ -4,6 +4,7 @@ import App from './App';
 import Header from './Components/Body/Header';
 import SignUp from './Components/Authentication/SignUp';
 import Login from './Components/Authentication/Login';
+import Update from './Components/Authentication/Update';
 
 function AppRoutes ()
 {
@@ -14,6 +15,7 @@ function AppRoutes ()
         <Route path = "/" element = { <App /> } />
         <Route path = "/signup" element = { <SignUp /> } />
         <Route path = "/login" element = { <Login /> } />
+        <Route path = "/update" element = { <Update /> } />
         <Route path = "/header" element = { <Header /> } />
         <Route path = "*" element = { <App /> } />
       </Routes>

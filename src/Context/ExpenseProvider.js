@@ -3,11 +3,15 @@ import ExpenseContext from "./expense-context";
 
 function ExpenseProvider ( props )
 {
+  // State for checking if the user is loggedin or not
   const [ loginToken, setLoginToken ] = useState ( null );
+  
+  // States for alert
   const [ isValid, setIsValid ] = useState ( false );
   const [ errorMessage, setErrorMessage ] = useState ( "" );
   const [ errorType, setErrorType ] = useState ( "" );
 
+  // Function to authenticate user (Signup/Login)
   async function authenticationHandler ( email, password, isLogin )
   {
     let url = isLogin
@@ -55,9 +59,9 @@ function ExpenseProvider ( props )
     }
   }
 
+  // Function to clear the success/error message after 2 seconds
   function clearMessageAfterDelay ()
   {
-    // Clear the success/error message after 2 seconds
     setTimeout (
       () => {
         setIsValid ( false );
