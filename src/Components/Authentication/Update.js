@@ -1,16 +1,74 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Alert, Button, Card, CardBody, Col, Container, Form, Row } from "react-bootstrap";
 import ExpenseContext from "../../Context/expense-context";
 import { useNavigate } from "react-router-dom";
 
 function Update ()
 {
-  const { loginToken, isValid, errorMessage, errorType, setIsValid, setErrorMessage, setErrorType, clearMessageAfterDelay } = useContext ( ExpenseContext );
+  const {
+    loginToken,
+    isValid,
+    errorMessage,
+    errorType,
+    setIsValid,
+    setErrorMessage,
+    setErrorType,
+    clearMessageAfterDelay
+  } = useContext ( ExpenseContext );
 
   const [ fullName, setFullName ] = useState ( "" );
   const [ profilePictureURL, setProfilePictureURL ] = useState ( "" );
 
   const navigate = useNavigate ();
+
+  useEffect (
+    () => {
+      fetchData ();
+    }, []
+  );
+
+  async function fetchData ()
+  {
+    try
+    {
+      const url = "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyAY0t64QOJOikMKYIQ9nYgx4GsZ4cOgoRA"
+
+      const response = await fetch ( url,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify (
+            {
+              idToken: loginToken,
+            }
+          ),
+        }
+      );
+
+      const data = await response.json ();
+
+      if ( !response.ok )
+      {
+        throw new Error ( data.error.message || "Failed to load data." );
+      }
+
+      setFullName ( data.users[0].displayName || "" ); // Fetch displayName
+      setProfilePictureURL ( data.users[0].photoUrl || "" ); // Fetch photoUrl
+    }
+
+    catch ( error )
+    {
+      // Changing states for alert messages
+      setIsValid ( true );
+      setErrorMessage ( error.message || "Failed to load data." );
+      setErrorType ( "danger" );
+
+      // Clear success message after 3 seconds
+      clearMessageAfterDelay ();
+    }
+  }
 
   async function formSubmitHandler ( event )
   {
@@ -42,9 +100,9 @@ function Update ()
           },
           body: JSON.stringify (
             {
-              idToken: loginToken,
-              displayName: fullName,
-              photoUrl: profilePictureURL,
+              idToken: loginToken, // Pass the loginToken correctly
+              displayName: fullName, // Use displayName for full name
+              photoUrl: profilePictureURL, // Use photoUrl for profile picture URL
               returnSecureToken: true,
             }
           ),
@@ -110,7 +168,7 @@ function Update ()
 
                 <Button variant = "primary" type = "submit" > Update </Button>
 
-                <Button variant = "secondary" className = "ml-2" onClick = { () => navigate ( "/header" ) } > Cancel </Button>
+                <Button variant = "secondary" className = "m-2" onClick = { () => navigate ( "/header" ) } > Cancel </Button>
 
               </Form>
 
