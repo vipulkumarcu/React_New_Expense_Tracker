@@ -58,7 +58,7 @@ function Header ()
   return (
     <>
 
-      <Navbar bg="dark" data-bs-theme="dark">
+      <Navbar bg = "dark" data-bs-theme = "dark" className = "mb-2">
 
         <Container fluid className = "m-0" >
 
@@ -90,9 +90,9 @@ function Header ()
 
       </Navbar>
 
-      <Container fluid className = "m-3" >
+      <Container >
         <Row>
-          <Col>
+          <Col >
           { isValid && <Alert variant = { errorType } onClose = { () => setIsValid ( false ) } dismissible > { errorMessage } </Alert> }
           </Col>
         </Row>

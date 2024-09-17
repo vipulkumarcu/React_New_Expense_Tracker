@@ -1,15 +1,37 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Button, FloatingLabel, Form, Modal } from "react-bootstrap";
 import ExpenseContext from "../../Context/expense-context";
 
-function ExpenseForm ( { showForm, formToggler } )
+function ExpenseForm ( { showForm, formToggler, expenseToEdit  } )
 {
-  const { addExpense } = useContext ( ExpenseContext );
+  const { addExpense, updateExpense  } = useContext ( ExpenseContext );
   const [ expenseTitle, setExpenseTitle ] = useState ( "" );
   const [ expenseAmount, setExpenseAmount ] = useState ( "" );
   const [ expenseDate, setExpenseDate ] = useState ( "" );
   const [ expenseDescription, setExpenseDescription ] = useState ( "" );
   const [ expenseCategory, setExpenseCategory ] = useState ( "" );
+
+  const formattedDate = new Date ( expenseDate ).toLocaleDateString ( 'en-GB',
+    {
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit',
+    }
+  );
+
+  // Use useEffect to populate form when editing
+  useEffect (
+    () => {
+      if ( expenseToEdit )
+      {
+        setExpenseTitle ( expenseToEdit.title );
+        setExpenseAmount ( expenseToEdit.amount );
+        setExpenseDate ( expenseToEdit.date );
+        setExpenseDescription ( expenseToEdit.description );
+        setExpenseCategory ( expenseToEdit.category );
+      }
+    }, [ expenseToEdit ]
+  );
 
   function formSubmitHandler ( event )
   {
@@ -18,14 +40,22 @@ function ExpenseForm ( { showForm, formToggler } )
     const expense = {
       title: expenseTitle,
       amount: expenseAmount,
-      date: expenseDate,
+      date: formattedDate,
       category: expenseCategory,
       description: expenseDescription
     }
 
-    console.log ( expense );
-
-    addExpense ( expense );
+    if ( expenseToEdit )
+    {
+      // Update existing expense
+      updateExpense ( expenseToEdit.id, expense );
+    }
+    
+    else
+    {
+      // Add new expense
+      addExpense ( expense );
+    }
     
     setExpenseTitle ( "" );
     setExpenseAmount ( "" );
@@ -78,7 +108,7 @@ function ExpenseForm ( { showForm, formToggler } )
 
       <Modal.Footer>
         <Button variant = "secondary" onClick = { formToggler } > Close </Button>
-        <Button variant = "danger" onClick = { formSubmitHandler } > Add </Button>
+        <Button variant = "danger" onClick = { formSubmitHandler } > { expenseToEdit  ? "Update" : "Add" } </Button>
       </Modal.Footer>
 
     </Modal>

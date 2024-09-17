@@ -6,8 +6,9 @@ const ExpenseContext = React.createContext (
     isValid: false,              // Tracks if the last operation was valid (success/failure)
     errorMessage: "",            // Holds the error or success message to be shown in UI
     errorType: "",               // Type of error (can be "danger" for error, "success" for success)
-    addExpenses: () => {},        // Function to add an expense
-    removeExpenses: () => {},        // Function to remove an expense
+    addExpense: () => {},        // Function to add an expense
+    removeExpense: () => {},        // Function to remove an expense
+    updateExpense: () => {},        // Function to update an expense
     setIsValid: () => {},        // Function to toggle the validity flag
     authenticationHandler: () => {},  // Function to handle login/signup (authentication)
     fetchUserData: () => {},  // Function to fetch previous user details

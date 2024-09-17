@@ -293,6 +293,7 @@ function ExpenseProvider ( props )
     }
   }
 
+  // Function to add an expense
   async function addExpense ( expense )
   {
     const url = "https://new-expense-tracker-63df8-default-rtdb.firebaseio.com/expenses.json";
@@ -322,7 +323,6 @@ function ExpenseProvider ( props )
       setExpenses ( ( previousExpense ) => [ ...previousExpense, { ...expense, id: data.name } ] );
   
       handleAlertMessages ( "Data Added Successfully.", "success" );
-  
     }
     
     catch ( error )
@@ -331,6 +331,7 @@ function ExpenseProvider ( props )
     }
   }
 
+  // Function to fetch expenses from the database
   async function fetchExpense ()
   {
     const url = "https://new-expense-tracker-63df8-default-rtdb.firebaseio.com/expenses.json";
@@ -377,12 +378,76 @@ function ExpenseProvider ( props )
       fetchExpense();
     }, []
   );
-  
-  
-  function removeExpense ( id )
+
+  // Function to remove an expense
+  async function removeExpense ( id )
   {
-    setExpenses ( previousExpense => previousExpense.filter ( ( expense ) => expense.id !== id ) );
+    const url = `https://new-expense-tracker-63df8-default-rtdb.firebaseio.com/expenses/${id}.json`;
+  
+    try {
+      const response = await fetch ( url,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      if ( !response.ok )
+      {
+        throw new Error("Failed to delete data.");
+      }
+  
+      // If the expense is successfully deleted, now update the local state
+      setExpenses ( ( previousExpenses ) => previousExpenses.filter ( ( expense ) => expense.id !== id ) );
+  
+      handleAlertMessages("Expense Deleted Successfully.", "success");
+    }
+    
+    catch ( error )
+    {
+      handleAlertMessages ( error.message || "Failed to delete expense.", "danger" );
+    }
+  }  
+  
+  // Function to update an expense
+  async function updateExpense ( id, updatedExpense )
+  {
+    const url = `https://new-expense-tracker-63df8-default-rtdb.firebaseio.com/expenses/${id}.json`;
+  
+    try {
+      const response = await fetch ( url,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify ( updatedExpense ),
+        }
+      );
+  
+      if ( !response.ok )
+      {
+        throw new Error ( "Failed to update expense." );
+      }
+  
+      const data = await response.json (); // Await the response to check if it's successful
+  
+      console.log ( data );
+  
+      // Update the local state with the updated expense
+      setExpenses ( ( previousExpenses ) => previousExpenses.map ( ( expense ) => expense.id === id ? { ...expense, ...updatedExpense } : expense ) );
+  
+      handleAlertMessages ( "Expense Updated Successfully.", "success" );
+    }
+    
+    catch ( error )
+    {
+      handleAlertMessages ( error.message || "Failed to update expense.", "danger" );
+    }
   }
+  
 
   const expenseContext = {
     expenses,
@@ -390,6 +455,7 @@ function ExpenseProvider ( props )
     errorMessage,
     errorType,
     addExpense,
+    updateExpense,
     removeExpense,
     setIsValid,
     authenticationHandler,
