@@ -3,9 +3,10 @@ import { Alert, Button, Card, CardBody, Col, Container, FloatingLabel, Form, Row
 import { useNavigate } from "react-router-dom";
 import ExpenseContext from "../../Context/expense-context";
 
-function Login ( { onTogglerClick } )
+function Login ()
 {
-  const navigate = useNavigate ();
+  const navigateToLandingPage = useNavigate ();
+  const navigateToSignupPage = useNavigate ();
 
   const [ email, setEmail ] = useState ( "" );
   const [ password, setPassword ] = useState ( "" );
@@ -41,9 +42,14 @@ function Login ( { onTogglerClick } )
       setEmail ( "" );
       setPassword ( "" );
       localStorage.setItem ( "Token", token );
-      navigate ( "/header" );
+      navigateToLandingPage ( "/landing-page" );
     }
   };
+
+  function togglePage ()
+  {
+    navigateToSignupPage ( "/signup" );
+  }
 
   return (
     <Container fluid style = { { textAlign: "center", padding: "3px" } } >
@@ -70,7 +76,7 @@ function Login ( { onTogglerClick } )
                   <Form.Control type = "password" placeholder = "Enter Your Password" value = { password } onChange = { ( e ) => setPassword ( e.target.value ) } />
                 </FloatingLabel>
 
-                <Button variant = "primary" className = "m-3 p-3" type = "submit" > Login </Button>
+                <Button variant = "primary" className = "m-3 p-2" style = { { height: "50px", width: "350px", borderRadius: "45px" } } type = "submit" > Login </Button>
 
               </Form>
 
@@ -80,7 +86,7 @@ function Login ( { onTogglerClick } )
 
           </Card>
 
-          <Button variant = "dark" className = "m-3 p-3" onClick = { onTogglerClick } > Don't Have an Account ? SignUp </Button>
+          <Button variant = "dark" className = "m-3 p-3" onClick = { togglePage } > Don't Have an Account ? SignUp </Button>
 
         </Col>
 

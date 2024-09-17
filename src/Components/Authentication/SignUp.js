@@ -1,12 +1,15 @@
 import { useContext, useState } from "react";
 import { Alert, Button, Card, CardBody, Col, Container, FloatingLabel, Form, Row } from "react-bootstrap";
 import ExpenseContext from "../../Context/expense-context";
+import { useNavigate } from "react-router-dom";
 
-function SignUp ( { onTogglerClick } )
+function SignUp ()
 {
   const [ email, setEmail ] = useState ( "" );
   const [ password, setPassword ] = useState ( "" );
   const [ confirmPassword, setConfirmPassword ] = useState ( "" );
+
+  const navigateToLoginPage = useNavigate ();
 
   localStorage.removeItem ( "Token" );
   
@@ -52,6 +55,11 @@ function SignUp ( { onTogglerClick } )
     }
   }
 
+  function togglePage ()
+  {
+    navigateToLoginPage ( "/login" );
+  }
+
   return (
     <Container fluid style = { { textAlign: "center", padding: "3px" } } >
 
@@ -81,7 +89,7 @@ function SignUp ( { onTogglerClick } )
                   <Form.Control type = "password" placeholder = "Enter Your Password Again" value = { confirmPassword } onChange = { ( e ) => setConfirmPassword ( e.target.value ) } />
                 </FloatingLabel>
 
-                <Button variant = "primary" className = "m-3 p-3" type = "submit" > SignUp </Button>
+                <Button variant = "primary" className = "m-3 p-2" style = { { height: "50px", width: "350px", borderRadius: "45px" } } type = "submit" > SignUp </Button>
 
               </Form>
 
@@ -89,7 +97,7 @@ function SignUp ( { onTogglerClick } )
 
           </Card>
 
-          <Button variant = "success" className = "m-3 p-3" onClick = { onTogglerClick }> Have an Account ? Login </Button>
+          <Button variant = "success" className = "m-3 p-3" onClick = { togglePage }> Have an Account ? Login </Button>
 
         </Col>
 

@@ -74,6 +74,7 @@ function ExpenseProvider ( props )
     clearMessageAfterDelay ();
   };
 
+  // Function to send verification email
   async function emailVerificationHandler ( token )
   {
     let url = "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyAY0t64QOJOikMKYIQ9nYgx4GsZ4cOgoRA";
@@ -112,6 +113,7 @@ function ExpenseProvider ( props )
     }
   }
 
+  // Function to check the evrification status
   async function emailVerified ( token, buttonClicked )
   {
     const url = "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyAY0t64QOJOikMKYIQ9nYgx4GsZ4cOgoRA";
@@ -174,8 +176,6 @@ function ExpenseProvider ( props )
     errorMessage,
     errorType,
     setIsValid,
-    // setErrorMessage,
-    // setErrorType,
     authenticationHandler,
     emailVerificationHandler,
     emailVerified,
