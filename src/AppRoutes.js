@@ -6,6 +6,7 @@ import Login from './Components/Authentication/Login';
 import Update from './Components/Authentication/Update';
 import Layout from './Layout';
 import Landingpage from './Components/Body/Landingpage';
+import ChangePassword from './Components/Authentication/ChangePassword';
 
 function AppRoutes ()
 {
@@ -22,10 +23,10 @@ function AppRoutes ()
           <Route path = "login" element = { <Login /> } />
           <Route path = "update" element = { <Update /> } />
           <Route path = "landing-page" element = { <Landingpage /> } />
-          <Route path = "*" element = { <App /> } />
-        </Route>
+          <Route path = "*" element = { <App /> } />    { /* Fallback route */ }
+        </Route>        
         
-        {/* Fallback route */}
+        <Route path = "change-password" element = { <ChangePassword /> } />
 
       </Routes>
 

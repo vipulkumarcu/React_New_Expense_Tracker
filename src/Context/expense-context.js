@@ -8,6 +8,7 @@ const ExpenseContext = React.createContext (
     setIsValid: () => {},        // Function to toggle the validity flag
     authenticationHandler: () => {},  // Function to handle login/signup (authentication)
     emailVerificationHandler: () => {},  // Function to handle user email verification
+    changePasswordHandler: () => {},  // Function to reset password
     emailVerified: () => {},  // Function to check if the email is verified
     clearMessageAfterDelay: () => {},  // Function to clear alerts after 3 seconds
     handleAlertMessages: () => {},  // Function to display error messages

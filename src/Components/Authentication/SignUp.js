@@ -67,7 +67,7 @@ function SignUp ()
 
         <Col xs = { 4 } md = { 6 } lg = { 4 } >
 
-          { isValid && <Alert variant = { errorType } onClose = { () => setIsValid ( false ) } dismissible > { errorMessage } </Alert> }
+          {/* { isValid && <Alert variant = { errorType } onClose = { () => setIsValid ( false ) } dismissible > { errorMessage } </Alert> } */}
 
           <Card className = "shadow">
 

@@ -113,7 +113,7 @@ function ExpenseProvider ( props )
     }
   }
 
-  // Function to check the evrification status
+  // Function to check the emai verification status
   async function emailVerified ( token, buttonClicked )
   {
     const url = "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyAY0t64QOJOikMKYIQ9nYgx4GsZ4cOgoRA";
@@ -171,6 +171,45 @@ function ExpenseProvider ( props )
     }
   }
 
+  // function to send password reset link on the user's email
+  async function changePasswordHandler ( email )
+  {
+    const url = "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyAY0t64QOJOikMKYIQ9nYgx4GsZ4cOgoRA";
+
+    try
+    {
+      const response = await fetch ( url,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify (
+            {
+              requestType: "PASSWORD_RESET",
+              email: email,
+            }
+          ),
+        }
+      );
+
+      const data = await response.json ();
+
+      if ( !response.ok )
+      {
+        throw new Error ( data.error.message || "Failed to change password." );
+      }
+
+      return true; // Success, the email has been sent
+    }
+
+    catch ( error )
+    {
+      handleAlertMessages ( error.message || "Failed to change password.", "danger" );
+      return false; // Failure, password change request failed
+    }
+  }
+
   const expenseContext = {
     isValid,
     errorMessage,
@@ -179,6 +218,7 @@ function ExpenseProvider ( props )
     authenticationHandler,
     emailVerificationHandler,
     emailVerified,
+    changePasswordHandler,
     clearMessageAfterDelay,
     handleAlertMessages,
   };
