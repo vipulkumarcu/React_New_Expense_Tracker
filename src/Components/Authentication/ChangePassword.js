@@ -8,6 +8,8 @@ function ChangePassword ()
   const [ email, setEmail ] = useState ( "" );
   const [isLoading, setLoading] = useState ( false );
 
+  localStorage.removeItem ( "Token" ); // Clear any existing token
+
   const navigate = useNavigate ();
 
   const {
@@ -22,8 +24,6 @@ function ChangePassword ()
   async function formSubmitHandler ( event )
   {
     event.preventDefault ();
-
-    localStorage.removeItem ( "Token" ); // Clear any existing token
 
     // Validate if field is empty and display appropriate message
     if ( !email )

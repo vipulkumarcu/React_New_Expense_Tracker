@@ -9,6 +9,8 @@ function Update ()
     isValid,
     errorMessage,
     errorType,
+    fetchUserData,
+    updateUserData,
     setIsValid,
     handleAlertMessages,
   } = useContext ( ExpenseContext );
@@ -21,48 +23,19 @@ function Update ()
 
   useEffect (
     () => {
-      async function fetchData ()
+      async function loadData ()
       {
-        try
+        if ( loginToken )
         {
-          const url = "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyAY0t64QOJOikMKYIQ9nYgx4GsZ4cOgoRA"
-
-          const response = await fetch ( url,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify (
-                {
-                  idToken: loginToken,
-                }
-              ),
-            }
-          );
-
-          const data = await response.json ();
-
-          if ( !response.ok )
-          {
-            throw new Error ( data.error.message || "Failed to load data." );
-          }
-
-          setFullName ( data.users[0].displayName || "" );
-          setProfilePictureURL ( data.users[0].photoUrl || "" );
-        }
-
-        catch ( error )
-        {
-          handleAlertMessages ( error.message || "Failed to load data.", "danger" );
+          const [ displayName, photoUrl ] = await fetchUserData ( loginToken );
+          setFullName ( displayName || "" );
+          setProfilePictureURL (photoUrl || "" );
         }
       }
 
-      if ( loginToken )
-      {
-        fetchData ();
-      }    
-    }, [ loginToken, handleAlertMessages ]
+      loadData ();
+          
+    }, [ loginToken, fetchUserData ]
   );
 
   async function formSubmitHandler ( event )
@@ -76,44 +49,15 @@ function Update ()
       return;
     }
 
-    const url = "https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyAY0t64QOJOikMKYIQ9nYgx4GsZ4cOgoRA"
+    const boolean = await updateUserData ( loginToken, fullName, profilePictureURL );
 
-    try
+    if ( boolean )
     {
-      const response = await fetch ( url,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify (
-            {
-              idToken: loginToken,
-              displayName: fullName,
-              photoUrl: profilePictureURL,
-              returnSecureToken: true,
-            }
-          ),
-        }
-      );
-
-      const data = await response.json ();
-
-      if ( !response.ok )
-      {
-        throw new Error ( data.error.message || "Failed to update profile." );
-      }
-
       handleAlertMessages ( "Profile Updated Successfully", "success" );
 
       // Reset form after success
       setFullName ( "" );
       setProfilePictureURL ( "" );
-    }
-
-    catch ( error )
-    {
-      handleAlertMessages ( error.message || "Failed to update profile.", "danger" );
     }
   }
 

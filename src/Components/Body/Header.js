@@ -60,7 +60,7 @@ function Header ()
 
       <Navbar bg="dark" data-bs-theme="dark">
 
-        <Container style = { { margin: 0} } >
+        <Container fluid className = "m-0" >
 
           <Navbar.Brand> Welcome To Expense Tracker </Navbar.Brand>
           
@@ -74,11 +74,13 @@ function Header ()
 
               (
                 <Nav>
-                  { !isEmailVerified && <Button variant = "warning" onClick = { () => verifyEmail ( true ) } > Verify Email </Button> }
 
-                  <Button variant = "light" onClick = { handleLogout } className = "ms-2"> Logout </Button>
+                  { !isEmailVerified && <Button variant = "warning" className = "m-2" onClick = { () => verifyEmail ( true ) } > Verify Email </Button> }
 
-                  { !isEmailVerified && <p style = { { color: "white" } } > Your profile is incomplete. <Link to = "/update" > Complete now. </Link> </p> }
+                  <Button variant = "light" onClick = { handleLogout } className = "m-2" > Logout </Button>
+
+                  { !isEmailVerified && <p style = { { color: "white", margin: "2px" } } > Your profile is incomplete. <Link to = "/update" > Complete now. </Link> </p> }
+                  
                 </Nav>
               )
                 
@@ -88,7 +90,7 @@ function Header ()
 
       </Navbar>
 
-      <Container className = "m-3" >
+      <Container fluid className = "m-3" >
         <Row>
           <Col>
           { isValid && <Alert variant = { errorType } onClose = { () => setIsValid ( false ) } dismissible > { errorMessage } </Alert> }

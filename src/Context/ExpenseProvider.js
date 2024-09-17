@@ -3,6 +3,7 @@ import ExpenseContext from "./expense-context";
 
 function ExpenseProvider ( props )
 { 
+  const [ expenses, setExpenses ] = useState ( [] );
   // States for alert
   const [ isValid, setIsValid ] = useState ( false );
   const [ errorMessage, setErrorMessage ] = useState ( "" );
@@ -60,6 +61,88 @@ function ExpenseProvider ( props )
         setErrorType ( "" );
       }, 3000
     );
+  }
+
+  // Function to fetch previous user details
+  async function fetchUserData ( loginToken )
+  {
+    try
+    {
+      const url = "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyAY0t64QOJOikMKYIQ9nYgx4GsZ4cOgoRA"
+
+      const response = await fetch ( url,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify (
+            {
+              idToken: loginToken,
+            }
+          ),
+        }
+      );
+
+      const data = await response.json ();
+
+      if ( !response.ok )
+      {
+        throw new Error ( data.error.message || "Failed to load data." );
+      }
+
+      return [ data.users[0].displayName, data.users[0].photoUrl ];
+    }
+
+    catch ( error )
+    {
+      handleAlertMessages ( error.message || "Failed to load data.", "danger" );
+      return [ "", "" ];
+    }
+  }
+
+  // Function to update the user details
+  async function updateUserData ( loginToken, fullName, profilePictureURL )
+  {
+    const url = "https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyAY0t64QOJOikMKYIQ9nYgx4GsZ4cOgoRA"
+
+    try
+    {
+      const response = await fetch ( url,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify (
+            {
+              idToken: loginToken,
+              displayName: fullName,
+              photoUrl: profilePictureURL,
+              returnSecureToken: true,
+            }
+          ),
+        }
+      );
+
+      const data = await response.json ();
+
+      if ( !response.ok )
+      {
+        throw new Error ( data.error.message || "Failed to update profile." );
+      }
+
+      localStorage.setItem ( "Token", data.idToken );
+
+      return true;
+    }
+
+    catch ( error )
+    {
+      handleAlertMessages ( error.message || "Failed to update profile.", "danger" );
+      return true;
+
+    }
   }
 
   // Function to handle and display errors
@@ -210,12 +293,27 @@ function ExpenseProvider ( props )
     }
   }
 
+  function addExpense ( expense )
+  {
+    setExpenses ( previousExpense => [ ...previousExpense, expense ] );
+  }
+
+  function removeExpense ( id )
+  {
+    setExpenses ( previousExpense => previousExpense.filter ( previousExpense.id !== id ) );
+  }
+
   const expenseContext = {
+    expenses,
     isValid,
     errorMessage,
     errorType,
+    addExpense,
+    removeExpense,
     setIsValid,
     authenticationHandler,
+    fetchUserData,
+    updateUserData,
     emailVerificationHandler,
     emailVerified,
     changePasswordHandler,
