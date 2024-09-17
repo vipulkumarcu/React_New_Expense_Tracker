@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 import { useContext, useState } from "react";
-import { Alert, Button, Card, CardBody, Col, Container, FloatingLabel, Form, Row } from "react-bootstrap";
+import { Button, Card, CardBody, Col, Container, FloatingLabel, Form, Row } from "react-bootstrap";
 import ExpenseContext from "../../Context/expense-context";
 import { useNavigate } from "react-router-dom";
 
@@ -13,14 +14,7 @@ function SignUp ()
 
   localStorage.removeItem ( "Token" );
   
-  const {
-    authenticationHandler,
-    isValid,
-    errorMessage,
-    errorType,
-    setIsValid,
-    handleAlertMessages, 
-  } = useContext ( ExpenseContext );
+  const { authenticationHandler, handleAlertMessages } = useContext ( ExpenseContext );
 
   async function formSubmitHandler ( event )
   {
@@ -66,8 +60,6 @@ function SignUp ()
       <Row className = "m-3 justify-content-center align-items-center" >
 
         <Col xs = { 4 } md = { 6 } lg = { 4 } >
-
-          {/* { isValid && <Alert variant = { errorType } onClose = { () => setIsValid ( false ) } dismissible > { errorMessage } </Alert> } */}
 
           <Card className = "shadow">
 

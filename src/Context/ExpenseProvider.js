@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import ExpenseContext from "./expense-context";
 
@@ -185,7 +186,6 @@ function ExpenseProvider ( props )
         throw new Error ( data.error.message || "Email verification failed" );
       }
 
-      handleAlertMessages ( "Email sent for verification. Verification status will change in your next session", "success" );
       return true;
     }
 
@@ -282,7 +282,7 @@ function ExpenseProvider ( props )
       {
         throw new Error ( data.error.message || "Failed to change password." );
       }
-
+      
       return true; // Success, the email has been sent
     }
 

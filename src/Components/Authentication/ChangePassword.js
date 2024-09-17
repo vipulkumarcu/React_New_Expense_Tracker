@@ -6,20 +6,28 @@ import { useNavigate } from "react-router-dom";
 function ChangePassword ()
 {
   const [ email, setEmail ] = useState ( "" );
-  const [isLoading, setLoading] = useState ( false );
+  const [ isLoading, setLoading ] = useState ( false );
+  const [ isValid, setIsValid ] = useState ( false );
+  const [ errorMessage, setErrorMessage ] = useState ( "" );
+  const [ errorType, setErrorType ] = useState ( "" );
 
   localStorage.removeItem ( "Token" ); // Clear any existing token
 
   const navigate = useNavigate ();
 
-  const {
-    isValid,
-    errorMessage,
-    errorType,
-    setIsValid,
-    changePasswordHandler,
-    handleAlertMessages, 
-  } = useContext ( ExpenseContext );
+  const { changePasswordHandler, clearMessageAfterDelay } = useContext ( ExpenseContext );
+
+  // Function to handle and display errors
+  function handleAlertMessages ( message, type )
+  {
+    // Changing states for alert messages
+    setIsValid ( true );
+    setErrorMessage ( message );
+    setErrorType ( type );
+
+    // Clearing alerts after 3 seconds
+    clearMessageAfterDelay ();
+  };
 
   async function formSubmitHandler ( event )
   {
