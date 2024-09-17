@@ -4,7 +4,13 @@ import ExpenseContext from "./expense-context";
 
 function ExpenseProvider ( props )
 { 
+  // See if token is available or not
+  const token = localStorage.getItem ( "Token" || null );
+  const email = localStorage.getItem ( "Email" || null );
+
+  // Local state for storing expenses
   const [ expenses, setExpenses ] = useState ( [] );
+
   // States for alert
   const [ isValid, setIsValid ] = useState ( false );
   const [ errorMessage, setErrorMessage ] = useState ( "" );
@@ -42,13 +48,13 @@ function ExpenseProvider ( props )
         throw new Error ( data.error.message || "Authentication failed" );
       }
 
-      return [ true, data.idToken ] ; // Indicates success and returns tokenID after login/signup is completed successfully
+      return [ true, data.idToken, data.email ] ; // Indicates success and returns tokenID and email after login/signup is completed successfully
     }
 
     catch ( error )
     {
       handleAlertMessages ( error.message || "Authentication failed", "danger" );
-      return [ false, null ]; // Indicates failure
+      return [ false, null, null ]; // Indicates failure
     }
   }
 
@@ -282,7 +288,7 @@ function ExpenseProvider ( props )
       {
         throw new Error ( data.error.message || "Failed to change password." );
       }
-      
+
       return true; // Success, the email has been sent
     }
 
@@ -306,7 +312,12 @@ function ExpenseProvider ( props )
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify ( expense ),
+          body: JSON.stringify (
+            {
+              userEmail: email,
+              expenses: expense
+            }
+          ),
         }
       );
   
@@ -316,8 +327,6 @@ function ExpenseProvider ( props )
       }
   
       const data = await response.json ();  // Await response.json() to correctly get the response body
-  
-      console.log ( data );
   
       // If the data is successfully added to Firebase, now update the local state
       setExpenses ( ( previousExpense ) => [ ...previousExpense, { ...expense, id: data.name } ] );
@@ -345,25 +354,38 @@ function ExpenseProvider ( props )
         throw new Error ( "Failed to fetch expenses." );
       }
   
-      const data = await response.json ();  // Await response.json() to correctly get the response body
-  
-      // Convert fetched data (object) into an array and update state
-      const loadedExpenses = [];
-  
-      for ( const key in data )
+      const data = await response.json ();  // Await response.json() to correctly get the response body    
+
+      const userEmailToFilter = email;
+
+      if ( data )
       {
-        loadedExpenses.push (
-          {
-            id: key,              // Firebase uses unique keys as ids
-            ...data[key],         // Spread the rest of the expense properties
-          }
-        );
+        // Convert the object into an array and filter by userEmail
+        const filteredExpenses = Object.entries ( data )
+        .filter ( ( [_, value] ) => value.userEmail === userEmailToFilter )
+        .map ( ( [ key, value ] ) => ( { id: key, ...value.expenses, } ) );
+
+        if ( filteredExpenses.length > 0 )
+        {
+          // Remove the expenses from the filtered array and set it in expenses
+          setExpenses ( filteredExpenses );
+          handleAlertMessages ( "Expenses fetched successfully.", "success" );
+        }
+
+        else
+        {
+          setExpenses ( [] );
+          handleAlertMessages ( "No Expenses Found.", "warning" );
+        }
+
       }
-  
-      // Update the expenses state
-      setExpenses ( loadedExpenses );
-  
-      handleAlertMessages ( "Expenses fetched successfully.", "success" );
+
+      else
+      {
+        setExpenses ( [] );
+        handleAlertMessages ( "No Expenses Found.", "warning" );
+
+      }
   
     }
     
@@ -373,11 +395,22 @@ function ExpenseProvider ( props )
     }
   }
   
-  useEffect (
-    () => {
-      fetchExpense();
-    }, []
-  );
+  // Runs to fetch data from firebase when component mounts
+  // useEffect (
+  //   () => {
+  //     const token = localStorage.getItem ( "Token" || null );
+
+  //     if ( token )
+  //     {
+  //       fetchExpense ();
+  //     }
+
+  //     else
+  //     {
+  //       setExpenses ( [] ); // Clear expenses when there is no token
+  //     }
+  //   }, [ localStorage.getItem ( "Token" ) ]
+  // );
 
   // Function to remove an expense
   async function removeExpense ( id )
@@ -423,7 +456,12 @@ function ExpenseProvider ( props )
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify ( updatedExpense ),
+          body: JSON.stringify (
+            {
+              userEmail: email,
+              expenses: updatedExpense,
+            }
+          ),
         }
       );
   
@@ -454,9 +492,11 @@ function ExpenseProvider ( props )
     isValid,
     errorMessage,
     errorType,
+    setExpenses,
     addExpense,
     updateExpense,
     removeExpense,
+    fetchExpense,
     setIsValid,
     authenticationHandler,
     fetchUserData,

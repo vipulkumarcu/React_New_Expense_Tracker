@@ -5,13 +5,14 @@ import ExpenseContext from "../../Context/expense-context";
 
 function Login ()
 {
+  // localStorage.removeItem ( "Token" );
+  // localStorage.removeItem ( "Email" );
+
   const navigateToLandingPage = useNavigate ();
   const navigateToSignupPage = useNavigate ();
 
   const [ email, setEmail ] = useState ( "" );
   const [ password, setPassword ] = useState ( "" );
-
-  localStorage.removeItem ( "Token" );
   
   const { authenticationHandler, handleAlertMessages } = useContext ( ExpenseContext );
 
@@ -26,7 +27,7 @@ function Login ()
       return;
     }
 
-    const [ loginSuccess, token ] = await authenticationHandler ( email, password, true ); // true for login  
+    const [ loginSuccess, token, userEmail ] = await authenticationHandler ( email, password, true ); // true for login  
     
     // Runs only after Login is Successful
     if ( loginSuccess )
@@ -35,6 +36,7 @@ function Login ()
       setEmail ( "" );
       setPassword ( "" );
       localStorage.setItem ( "Token", token );
+      localStorage.setItem ( "Email", userEmail );
       navigateToLandingPage ( "/landing-page" );
     }
   };

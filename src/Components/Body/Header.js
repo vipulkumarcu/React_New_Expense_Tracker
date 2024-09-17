@@ -6,8 +6,8 @@ import ExpenseContext from "../../Context/expense-context";
 
 function Header ()
 {
-  const token = localStorage.getItem ( "Token" || null );
-  const { emailVerificationHandler, emailVerified, isValid, setIsValid, errorMessage, errorType } = useContext ( ExpenseContext );
+  const token = localStorage.getItem ( "Token" )
+  const { emailVerificationHandler, setExpenses, fetchExpense, emailVerified, isValid, setIsValid, errorMessage, errorType } = useContext ( ExpenseContext );
   const [ isEmailVerified, setIsEmailVerified ] = useState ( false );
   const [ isUserLoggedIn, setIsUserLoggedIn ] = useState ( false );
   const navigate = useNavigate ();
@@ -41,8 +41,10 @@ function Header ()
   // Function to Logout user
   function handleLogout ()
   {
+    setExpenses ( [] );
     localStorage.removeItem ( "Token" ); // Clearing the token from local storage
-    setIsUserLoggedIn ( false ); // Boolean 
+    localStorage.removeItem ( "Email" ); // Clearing the email from local storage
+    setIsUserLoggedIn ( false ); // Boolean
     navigate ( "/login" ); // Redirecting user to the login page after logout
   };
 
@@ -52,6 +54,7 @@ function Header ()
       {
         setIsUserLoggedIn ( true );
         verifyEmail ( false );
+        fetchExpense ();
       }
     }, [ token ]
   );

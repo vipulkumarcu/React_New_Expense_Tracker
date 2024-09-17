@@ -38,6 +38,7 @@ function ExpenseForm ( { showForm, formToggler, expenseToEdit  } )
     event.preventDefault ();
 
     const expense = {
+      // id: Date.now().toString(),
       title: expenseTitle,
       amount: expenseAmount,
       date: formattedDate,

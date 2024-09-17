@@ -6,13 +6,14 @@ import { useNavigate } from "react-router-dom";
 
 function SignUp ()
 {
+  localStorage.removeItem ( "Token" );
+  localStorage.removeItem ( "Email" );
+
   const [ email, setEmail ] = useState ( "" );
   const [ password, setPassword ] = useState ( "" );
   const [ confirmPassword, setConfirmPassword ] = useState ( "" );
 
   const navigateToLoginPage = useNavigate ();
-
-  localStorage.removeItem ( "Token" );
   
   const { authenticationHandler, handleAlertMessages } = useContext ( ExpenseContext );
 
@@ -35,7 +36,7 @@ function SignUp ()
     }
 
     // Call authentication handler and wait for response
-    const [ signupSuccess, token ] = await authenticationHandler ( email, password, false ); // false means signup
+    const [ signupSuccess, token, userEmail ] = await authenticationHandler ( email, password, false ); // false means signup
 
     // Runs only after Signup is Successful
     if ( signupSuccess )
