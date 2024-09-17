@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ExpenseContext from "./expense-context";
 
 function ExpenseProvider ( props )
@@ -293,14 +293,95 @@ function ExpenseProvider ( props )
     }
   }
 
-  function addExpense ( expense )
+  async function addExpense ( expense )
   {
-    setExpenses ( previousExpense => [ ...previousExpense, expense ] );
+    const url = "https://new-expense-tracker-63df8-default-rtdb.firebaseio.com/expenses.json";
+  
+    try
+    {
+      const response = await fetch ( url,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify ( expense ),
+        }
+      );
+  
+      if ( !response.ok )
+      {
+        throw new Error ( "Failed to add data." );
+      }
+  
+      const data = await response.json ();  // Await response.json() to correctly get the response body
+  
+      console.log ( data );
+  
+      // If the data is successfully added to Firebase, now update the local state
+      setExpenses ( ( previousExpense ) => [ ...previousExpense, { ...expense, id: data.name } ] );
+  
+      handleAlertMessages ( "Data Added Successfully.", "success" );
+  
+    }
+    
+    catch ( error )
+    {
+      handleAlertMessages ( error.message || "Failed to add data.", "danger" );
+    }
   }
 
+  async function fetchExpense ()
+  {
+    const url = "https://new-expense-tracker-63df8-default-rtdb.firebaseio.com/expenses.json";
+  
+    try
+    {
+      const response = await fetch ( url );
+  
+      if ( !response.ok )
+      {
+        throw new Error ( "Failed to fetch expenses." );
+      }
+  
+      const data = await response.json ();  // Await response.json() to correctly get the response body
+  
+      // Convert fetched data (object) into an array and update state
+      const loadedExpenses = [];
+  
+      for ( const key in data )
+      {
+        loadedExpenses.push (
+          {
+            id: key,              // Firebase uses unique keys as ids
+            ...data[key],         // Spread the rest of the expense properties
+          }
+        );
+      }
+  
+      // Update the expenses state
+      setExpenses ( loadedExpenses );
+  
+      handleAlertMessages ( "Expenses fetched successfully.", "success" );
+  
+    }
+    
+    catch ( error )
+    {
+      handleAlertMessages ( error.message || "Failed to fetch expenses.", "danger" );
+    }
+  }
+  
+  useEffect (
+    () => {
+      fetchExpense();
+    }, []
+  );
+  
+  
   function removeExpense ( id )
   {
-    setExpenses ( previousExpense => previousExpense.filter ( previousExpense.id !== id ) );
+    setExpenses ( previousExpense => previousExpense.filter ( ( expense ) => expense.id !== id ) );
   }
 
   const expenseContext = {

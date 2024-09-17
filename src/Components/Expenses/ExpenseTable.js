@@ -7,7 +7,7 @@ function ExpenseTable ()
   const { expenses, removeExpense } = useContext ( ExpenseContext );
 
   return (
-    <Table striped bordered hover>
+    <Table striped bordered hover style = { { textAlign: "center" } }>
 
       <thead>
 
@@ -15,9 +15,11 @@ function ExpenseTable ()
           <th> # </th>
           <th> Title </th>
           <th> Amount </th>
+          <th> Date </th>
           <th> Caterogy </th>
           <th> Description </th>
-          <th> Delete Button </th>
+          {/* <th> Edit Button </th>
+          <th> Delete Button </th> */}
         </tr>
 
       </thead>
@@ -36,9 +38,11 @@ function ExpenseTable ()
                 <td> { index + 1 } </td>
                 <td> { expense.title } </td>
                 <td> { expense.amount } </td>
+                <td> { expense.date } </td>
                 <td> { expense.category } </td>
                 <td> { expense.description } </td>
-                <td> <Button variant = "danger" onClick = { () => removeExpense ( expense.id) } > Delete </Button> </td>
+                {/* <td> <Button className = "shadow" variant = "warning" onClick = { () => removeExpense ( expense.id) } > Edit </Button> </td>
+                <td> <Button className = "shadow" variant = "danger" onClick = { () => removeExpense ( expense.id) } > Delete </Button> </td> */}
               </tr>
             ))
           )

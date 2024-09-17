@@ -7,6 +7,7 @@ function ExpenseForm ( { showForm, formToggler } )
   const { addExpense } = useContext ( ExpenseContext );
   const [ expenseTitle, setExpenseTitle ] = useState ( "" );
   const [ expenseAmount, setExpenseAmount ] = useState ( "" );
+  const [ expenseDate, setExpenseDate ] = useState ( "" );
   const [ expenseDescription, setExpenseDescription ] = useState ( "" );
   const [ expenseCategory, setExpenseCategory ] = useState ( "" );
 
@@ -15,9 +16,9 @@ function ExpenseForm ( { showForm, formToggler } )
     event.preventDefault ();
 
     const expense = {
-      id: Date.now().toString(),
       title: expenseTitle,
       amount: expenseAmount,
+      date: expenseDate,
       category: expenseCategory,
       description: expenseDescription
     }
@@ -51,6 +52,10 @@ function ExpenseForm ( { showForm, formToggler } )
 
           <FloatingLabel controlId = "expenseAmount" label = "Amount Spent" className = "m-2">
             <Form.Control type = "text" placeholder = "Expense Amount" value = { expenseAmount } onChange = { ( e ) => setExpenseAmount ( e.target.value ) } />
+          </FloatingLabel>
+
+          <FloatingLabel controlId = "expenseDate" label = "Date Spent" className = "m-2">
+            <Form.Control type = "date" placeholder = "Date Spent" value = { expenseDate } onChange = { ( e ) => setExpenseDate ( e.target.value ) } />
           </FloatingLabel>
 
           <FloatingLabel controlId = "expenseCategory" label = "Expense Category" className = "m-2" >
