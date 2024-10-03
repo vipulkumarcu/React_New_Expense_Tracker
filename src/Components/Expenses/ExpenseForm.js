@@ -11,14 +11,6 @@ function ExpenseForm ( { showForm, formToggler, expenseToEdit  } )
   const [ expenseDescription, setExpenseDescription ] = useState ( "" );
   const [ expenseCategory, setExpenseCategory ] = useState ( "" );
 
-  const formattedDate = new Date ( expenseDate ).toLocaleDateString ( 'en-GB',
-    {
-      day: '2-digit',
-      month: '2-digit',
-      year: '2-digit',
-    }
-  );
-
   // Use useEffect to populate form when editing
   useEffect (
     () => {
@@ -38,10 +30,9 @@ function ExpenseForm ( { showForm, formToggler, expenseToEdit  } )
     event.preventDefault ();
 
     const expense = {
-      // id: Date.now().toString(),
       title: expenseTitle,
       amount: expenseAmount,
-      date: formattedDate,
+      date: expenseDate,
       category: expenseCategory,
       description: expenseDescription
     }
@@ -70,7 +61,7 @@ function ExpenseForm ( { showForm, formToggler, expenseToEdit  } )
     <Modal show = { showForm } onHide = { formToggler } >
 
       <Modal.Header closeButton>
-        <Modal.Title> Add Expenses </Modal.Title>
+        <Modal.Title>  { expenseToEdit  ? "Update Expense" : "Add Expense" }  </Modal.Title>
       </Modal.Header>
 
       <Modal.Body>

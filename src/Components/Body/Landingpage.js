@@ -26,7 +26,9 @@ function Landingpage ()
       </Row>
 
       <Row>
-        <ExpenseTable />
+        <Col>
+          <ExpenseTable />
+        </Col>
       </Row>
 
     </Container>

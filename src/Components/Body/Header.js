@@ -8,8 +8,9 @@ function Header ()
 {
   const token = localStorage.getItem ( "Token" )
   const { emailVerificationHandler, setExpenses, fetchExpense, emailVerified, isValid, setIsValid, errorMessage, errorType } = useContext ( ExpenseContext );
-  const [ isEmailVerified, setIsEmailVerified ] = useState ( false );
+  const [ isEmailVerified, setIsEmailVerified ] = useState ( null );
   const [ isUserLoggedIn, setIsUserLoggedIn ] = useState ( false );
+  const [ isVerifying, setIsVerifying ] = useState ( true );
   const navigate = useNavigate ();
 
   // function to check if the email is verified or not
@@ -24,6 +25,8 @@ function Header ()
     
     if ( boolean )
     {
+      setIsEmailVerified ( true );
+      setIsVerifying ( false );
       return;
     }
 
@@ -35,6 +38,13 @@ function Header ()
       {
         setIsEmailVerified ( true );
       }
+
+      else
+      {
+        setIsEmailVerified ( false );
+      }
+
+      setIsVerifying ( false );
     }
   }
 
@@ -42,6 +52,7 @@ function Header ()
   function handleLogout ()
   {
     setExpenses ( [] );
+    setIsEmailVerified ( true ); // Changing the email verification boolean to true
     localStorage.removeItem ( "Token" ); // Clearing the token from local storage
     localStorage.removeItem ( "Email" ); // Clearing the email from local storage
     setIsUserLoggedIn ( false ); // Boolean
@@ -55,6 +66,11 @@ function Header ()
         setIsUserLoggedIn ( true );
         verifyEmail ( false );
         fetchExpense ();
+      }
+
+      else
+      {
+        setIsVerifying ( false ); // No token, no need to verify
       }
     }, [ token ]
   );
@@ -79,11 +95,11 @@ function Header ()
               (
                 <Nav>
 
-                  { !isEmailVerified && <Button variant = "warning" className = "m-2" onClick = { () => verifyEmail ( true ) } > Verify Email </Button> }
+                  { !isVerifying && !isEmailVerified && <Button variant = "warning" className = "m-2" onClick = { () => verifyEmail ( true ) } > Verify Email </Button> }
 
                   <Button variant = "light" onClick = { handleLogout } className = "m-2" > Logout </Button>
 
-                  { !isEmailVerified && <p style = { { color: "white", margin: "2px" } } > Your profile is incomplete. <Link to = "/update" > Complete now. </Link> </p> }
+                  { !isVerifying && !isEmailVerified && <p style = { { color: "white", margin: "2px" } } > Your profile is incomplete. <Link to = "/update" > Complete now. </Link> </p> }
                   
                 </Nav>
               )

@@ -1,12 +1,10 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ExpenseContext from "./expense-context";
 
 function ExpenseProvider ( props )
 { 
-  // See if token is available or not
-  const token = localStorage.getItem ( "Token" || null );
-  const email = localStorage.getItem ( "Email" || null );
 
   // Local state for storing expenses
   const [ expenses, setExpenses ] = useState ( [] );
@@ -302,6 +300,7 @@ function ExpenseProvider ( props )
   // Function to add an expense
   async function addExpense ( expense )
   {
+    const email = localStorage.getItem ( "Email" || null );
     const url = "https://new-expense-tracker-63df8-default-rtdb.firebaseio.com/expenses.json";
   
     try
@@ -343,6 +342,7 @@ function ExpenseProvider ( props )
   // Function to fetch expenses from the database
   async function fetchExpense ()
   {
+    const userEmailToFilter = localStorage.getItem ( "Email" || null );
     const url = "https://new-expense-tracker-63df8-default-rtdb.firebaseio.com/expenses.json";
   
     try
@@ -355,8 +355,6 @@ function ExpenseProvider ( props )
       }
   
       const data = await response.json ();  // Await response.json() to correctly get the response body    
-
-      const userEmailToFilter = email;
 
       if ( data )
       {
@@ -394,23 +392,6 @@ function ExpenseProvider ( props )
       handleAlertMessages ( error.message || "Failed to fetch expenses.", "danger" );
     }
   }
-  
-  // Runs to fetch data from firebase when component mounts
-  // useEffect (
-  //   () => {
-  //     const token = localStorage.getItem ( "Token" || null );
-
-  //     if ( token )
-  //     {
-  //       fetchExpense ();
-  //     }
-
-  //     else
-  //     {
-  //       setExpenses ( [] ); // Clear expenses when there is no token
-  //     }
-  //   }, [ localStorage.getItem ( "Token" ) ]
-  // );
 
   // Function to remove an expense
   async function removeExpense ( id )
@@ -447,6 +428,7 @@ function ExpenseProvider ( props )
   // Function to update an expense
   async function updateExpense ( id, updatedExpense )
   {
+    const email = localStorage.getItem ( "Email" || null );
     const url = `https://new-expense-tracker-63df8-default-rtdb.firebaseio.com/expenses/${id}.json`;
   
     try {
@@ -471,8 +453,6 @@ function ExpenseProvider ( props )
       }
   
       const data = await response.json (); // Await the response to check if it's successful
-  
-      console.log ( data );
   
       // Update the local state with the updated expense
       setExpenses ( ( previousExpenses ) => previousExpenses.map ( ( expense ) => expense.id === id ? { ...expense, ...updatedExpense } : expense ) );
