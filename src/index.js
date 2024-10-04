@@ -4,12 +4,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import AppRoutes from './AppRoutes';
 import ExpenseProvider from './Context/ExpenseProvider';
 import { Provider } from 'react-redux';
-import store from './Store/store'; // Adjust the path as necessary
+import store from './Store/store';
+import "./index.css";
 
 const root = ReactDOM.createRoot ( document.getElementById ( 'root' ) );
 
 root.render (
-  <Provider store = { store } > {/* Wrap your application with Redux Provider */}
+  <Provider store = { store } >
     <ExpenseProvider>
       <AppRoutes />
     </ExpenseProvider>
